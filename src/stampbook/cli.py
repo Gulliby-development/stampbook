@@ -34,9 +34,11 @@ def _build_parser() -> argparse.ArgumentParser:
     sub.add_parser("status", help="show the running entry")
     p_log = sub.add_parser("log", help="list entries of a day")
     p_log.add_argument("--day", default=None)
+    p_log.add_argument("--project", default=None)
     p_rep = sub.add_parser("report", help="totals per project")
     p_rep.add_argument("--from", dest="date_from", default=None)
     p_rep.add_argument("--to", dest="date_to", default=None)
+    p_rep.add_argument("--project", default=None)
     return parser
 
 
@@ -83,6 +85,8 @@ def _cmd_log(store: Store, args: argparse.Namespace, now: datetime) -> None:
     lo, hi = range_bounds(day, day)
     lines = []
     for entry in store.entries():
+        if args.project is not None and entry.project != args.project:
+            continue
         end = entry.effective_end(now)
         if not overlaps(entry.start, end, lo, hi):
             continue
@@ -96,7 +100,10 @@ def _cmd_log(store: Store, args: argparse.Namespace, now: datetime) -> None:
             line += f" # {entry.note}"
         lines.append(line)
     if not lines:
-        print(f"No entries on {day.isoformat()}")
+        if args.project is not None:
+            print(f"No entries for {args.project} on {day.isoformat()}")
+        else:
+            print(f"No entries on {day.isoformat()}")
         return
     print("\n".join(lines))
 
@@ -106,13 +113,21 @@ def _cmd_report(store: Store, args: argparse.Namespace, now: datetime) -> None:
     lo, hi = range_bounds(first, last)
     totals: dict[str, int] = {}
     for entry in store.entries():
+        if args.project is not None and entry.project != args.project:
+            continue
         end = entry.effective_end(now)
         if not overlaps(entry.start, end, lo, hi):
             continue
         seconds = clipped_seconds(entry.start, end, lo, hi)
         totals[entry.project] = totals.get(entry.project, 0) + seconds
     if not totals:
-        print(f"No entries from {first.isoformat()} to {last.isoformat()}")
+        if args.project is not None:
+            print(
+                f"No entries for {args.project} from "
+                f"{first.isoformat()} to {last.isoformat()}"
+            )
+        else:
+            print(f"No entries from {first.isoformat()} to {last.isoformat()}")
         return
     width = max(len(name) for name in totals)
     for name, seconds in sorted(totals.items(), key=lambda kv: (-kv[1], kv[0])):
@@ -137,6 +152,8 @@ def _run(argv: list[str] | None) -> int:
         validate_note(args.note)
     elif args.command == "log":
         args.day_value = parse_date(args.day) if args.day is not None else now.date()
+        if args.project is not None:
+            validate_project(args.project)
     elif args.command == "report":
         today: date = now.date()
         first = parse_date(args.date_from) if args.date_from is not None else None
@@ -145,6 +162,8 @@ def _run(argv: list[str] | None) -> int:
         args.to_value = last if last is not None else today
         if args.from_value > args.to_value:
             raise UsageError("--from is after --to")
+        if args.project is not None:
+            validate_project(args.project)
     with Store(_db_path(args.db)) as store:
         _COMMANDS[args.command](store, args, now)
     return 0
