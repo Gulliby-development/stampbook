@@ -15,7 +15,7 @@ You want a simple, scriptable way to see where your time goes, without an accoun
 Use a virtual environment so the `stampbook` command stays out of your system Python:
 
     python -m venv .venv
-    . .venv/bin/activate        # Windows: .venv\Scriptsctivate
+    . .venv/bin/activate        # Windows: .venv\Scripts\activate
     pip install .
 
 This installs the `stampbook` command; `python -m stampbook` works too.
@@ -27,8 +27,10 @@ This installs the `stampbook` command; `python -m stampbook` works too.
 - `stampbook [--db PATH] start PROJECT [-m NOTE]`
 - `stampbook stop`
 - `stampbook status`
-- `stampbook log [--day YYYY-MM-DD]`
-- `stampbook report [--from YYYY-MM-DD] [--to YYYY-MM-DD]`
+- `stampbook log [--day YYYY-MM-DD] [--project PROJECT]`
+- `stampbook report [--from YYYY-MM-DD] [--to YYYY-MM-DD] [--project PROJECT]`
+
+`--project PROJECT` keeps only the entries of that project (exact, case-sensitive name; same rules as for `start`). Without it, both commands list every project. If nothing matches, the message names the project, for example `No entries for docs on 2024-03-05`.
 
 Example session (the database path is omitted; `$ export` sets the clock):
 
@@ -58,6 +60,13 @@ $ stampbook report --from 2024-03-04 --to 2024-03-05
 website  1h 05m
 docs     42m
 Total: 1h 47m
+$ stampbook log --project website
+09:00 10:05 website 1h 05m # landing page
+$ stampbook report --from 2024-03-04 --to 2024-03-05 --project docs
+docs  42m
+Total: 42m
+$ stampbook log --project blog
+No entries for blog on 2024-03-05
 $ stampbook report --from 2024-03-06 --to 2024-03-05
 stampbook: --from is after --to
 ```
