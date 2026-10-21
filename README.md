@@ -29,6 +29,9 @@ This installs the `stampbook` command; `python -m stampbook` works too.
 - `stampbook status`
 - `stampbook log [--day YYYY-MM-DD] [--project PROJECT]`
 - `stampbook report [--from YYYY-MM-DD] [--to YYYY-MM-DD] [--project PROJECT]`
+- `stampbook --version`
+
+`stampbook --version` prints `stampbook 0.1.0` and exits 0; like `--db` it is a global option and goes before the command. The version is defined once, as `__version__` in `src/stampbook/__init__.py`, and `pyproject.toml` reads it from there (`dynamic = ["version"]`), so a release changes that one line.
 
 `--project PROJECT` keeps only the entries of that project (exact, case-sensitive name; same rules as for `start`). Without it, both commands list every project. If nothing matches, the message names the project, for example `No entries for docs on 2024-03-05`.
 

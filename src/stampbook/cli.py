@@ -7,6 +7,7 @@ import os
 import sys
 from datetime import UTC, date, datetime
 
+from . import __version__
 from .store import Store, validate_note, validate_project
 from .timeutil import (
     StampbookError,
@@ -26,6 +27,7 @@ from .timeutil import (
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="stampbook", description="Time tracker.")
     parser.add_argument("--db", default=None, help="database path")
+    parser.add_argument("--version", action="version", version=f"stampbook {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
     p_start = sub.add_parser("start", help="start tracking a project")
     p_start.add_argument("project")
