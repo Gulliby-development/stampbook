@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stampbook"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Command-line time tracker backed by SQLite"
 readme = "README.md"
 license = "MIT"
@@ -17,6 +17,9 @@ stampbook = "stampbook.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "stampbook.__version__"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
