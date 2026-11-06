@@ -76,10 +76,12 @@ def _cmd_status(store: Store, args: argparse.Namespace, now: datetime) -> None:
         print("idle")
         return
     seconds = max(int((now - entry.start).total_seconds()), 0)
-    print(
-        f"running: {entry.project} since {format_display(entry.start)} "
-        f"({format_duration(seconds)})"
+    line = (
+        f"running: {entry.project} since {format_display(entry.start)} ({format_duration(seconds)})"
     )
+    if entry.note:
+        line += f" # {entry.note}"
+    print(line)
 
 
 def _cmd_log(store: Store, args: argparse.Namespace, now: datetime) -> None:

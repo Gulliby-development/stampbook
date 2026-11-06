@@ -33,6 +33,8 @@ This installs the `stampbook` command; `python -m stampbook` works too.
 
 `stampbook --version` prints `stampbook 0.1.0` and exits 0; like `--db` it is a global option and goes before the command. The version is defined once, as `__version__` in `src/stampbook/__init__.py`, and `pyproject.toml` reads it from there (`dynamic = ["version"]`), so a release changes that one line.
 
+`stampbook status` ends its line with ` # NOTE` when the running entry has a note, as `stampbook log` does for an entry.
+
 `--project PROJECT` keeps only the entries of that project (exact, case-sensitive name; same rules as for `start`). Without it, both commands list every project. If nothing matches, the message names the project, for example `No entries for docs on 2024-03-05`.
 
 Example session (the database path is omitted; `$ export` sets the clock):
@@ -47,7 +49,7 @@ $ stampbook start docs
 stampbook: already running: website since 2024-03-05 09:00:00
 $ export STAMPBOOK_NOW=2024-03-05T10:05:00
 $ stampbook status
-running: website since 2024-03-05 09:00:00 (1h 05m)
+running: website since 2024-03-05 09:00:00 (1h 05m) # landing page
 $ stampbook stop
 stopped website after 1h 05m
 $ export STAMPBOOK_NOW=2024-03-05T11:00:00

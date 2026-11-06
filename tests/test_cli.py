@@ -71,7 +71,7 @@ def test_start_stop_status(run):
     )
     assert run("2024-03-05T10:05:00", "status") == (
         0,
-        "running: proj since 2024-03-05 09:00:00 (1h 05m)\n",
+        "running: proj since 2024-03-05 09:00:00 (1h 05m) # note\n",
         "",
     )
     assert run("2024-03-05T10:05:59", "stop") == (
